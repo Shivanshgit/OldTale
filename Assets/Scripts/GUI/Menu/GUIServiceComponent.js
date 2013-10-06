@@ -1,4 +1,5 @@
 ﻿#pragma strict
+import System.Collections.Generic;
 
 public class GUIService
 {
@@ -6,52 +7,47 @@ public class GUIService
     /// constructor
     public function GUIService(shown: boolean)
     {
-        guiShown = shown;
+        m_guiShown = shown;
     }
 
     /// properties
 
     /// @c true if GUI element should be shown and false otherwise.
-    var guiShown: boolean;
-
-    /// Contains an array of options that are used in a GUI element.
-    var guiOptions: Object[]; // TODO: replace Object by a new general class for all GUI elements that have a draw() and etc. methods.
-
+    var m_guiShown: boolean;
     public function get GUIShown() : boolean
     {
-        return guiShown;
+        return m_guiShown;
     }
-
     public function set GUIShown( value: boolean)
     {
-        guiShown = value;
+        m_guiShown = value;
     }
 
-    public function get GUIOptions() : Object[]
+    /// Contains an array of options that are used in a GUI element.
+    var m_guiOptions = new List.<GUIObject>();
+    public function get GUIOptions() : List.<GUIObject>
     {
-        return guiOptions;
+        return m_guiOptions;
     }
-
-    public function set GUIOptions(value: Object[])
+/*    public function set GUIOptions(value: List.<GUIObject>)
     {
         guiOptions = value;
-    }
-
-    public function getGUIOption(index: int): Object
-    {
-        if (index >= 0 && index < guiOptions.Length )
-        {
-            return guiOptions[index];
-        }
-        else
-        {
-            return null;
-        }
-    }
+    }*/
 
     public function getGUIOptionsCount(): int
     {
-        return guiOptions ? guiOptions.Length : 0;
+        return m_guiOptions.Count;
+    }
+
+    public function draw()
+    {
+        if (m_guiShown)
+        {
+            for (var i: int = 0; i < m_guiOptions.Count; i++)
+            {
+                m_guiOptions[i].drawObject();
+            }
+        }
     }
 
 }

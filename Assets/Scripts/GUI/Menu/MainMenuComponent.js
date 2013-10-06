@@ -1,5 +1,9 @@
 ﻿#pragma strict
+/**
+ * @brief this component handles OnGUI() callbacks. Typically should be attached to an empty gameObject.
+ */
 
+/// will call DontDestroyOnLoad(this) if set to @c true which is mean that this component will not be destroyed when new Scene is loaded.
 public var mc_bKeepThisMainMenuOnLoad = false;
 
 public class MainMenu
@@ -10,12 +14,12 @@ public class MainMenu
      * @brief MenuService that is used by a MainMenu. Contains a list of options for a MainMenu.
      */
     var m_GUIService: GUIService;
-    public function getGUIService(): GUIService
+    public function get GUIService(): GUIService
     {
         return m_GUIService;
     }
 
-    public function setGUIService(value: GUIService)
+    public function set GUIService(value: GUIService)
     {
         m_GUIService = value;
     }
@@ -43,22 +47,23 @@ function Awake ()
     }
 }
 
-function OnGUI()
+function Update()
 {
     if (Input.GetButtonDown("OpenMainMenu"))
     {
-        if (mc_MainMenu.getGUIService())
+        if (mc_MainMenu.GUIService)
         {
-            mc_MainMenu.getGUIService().GUIShown = !mc_MainMenu.getGUIService().GUIShown;
+            mc_MainMenu.GUIService.GUIShown = !mc_MainMenu.GUIService.GUIShown;
         }
     }
-    if (mc_MainMenu.getGUIService() && mc_MainMenu.getGUIService().GUIShown)
+}
+
+function OnGUI()
+{
+    if (mc_MainMenu.GUIService && mc_MainMenu.GUIService.GUIShown)
     {
         GUI.Box(Rect(0.0f, 0.0f, Screen.width, Screen.height), "OldTale");
-        if (mc_MainMenu.getGUIService().getGUIOptionsCount() > 0)
-        {
-            // create menu items.
-        }
+        mc_MainMenu.GUIService.draw();
     }
 }
 
