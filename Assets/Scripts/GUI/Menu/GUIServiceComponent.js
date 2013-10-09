@@ -29,10 +29,6 @@ public class GUIService
     {
         return m_guiOptions;
     }
-/*    public function set GUIOptions(value: List.<GUIObject>)
-    {
-        guiOptions = value;
-    }*/
 
     public function getGUIOptionsCount(): int
     {

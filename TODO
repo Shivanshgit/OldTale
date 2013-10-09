@@ -1,0 +1,2 @@
+// Write here anything that you want to do with a current code (no new features here :) )
+0) Re-write everything, use components instead of classes when it is possible. GameDirector simply should add/remove/enable/disable components by trigger.

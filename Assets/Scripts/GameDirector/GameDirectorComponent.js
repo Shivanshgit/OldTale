@@ -21,6 +21,11 @@ public class GameDirector
     {
         Application.LoadLevel("Prolog");
     }
+
+    function onDialogFinished(dialog: BaseDialog)
+    {
+        //TODO: do something
+    }
 }
 
 private var gameDirector = new GameDirector();
@@ -28,4 +33,8 @@ private var gameDirector = new GameDirector();
 function getGameDirector(): GameDirector
 {
     return gameDirector;
+}
+
+function Update()
+{
 }
