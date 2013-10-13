@@ -5,9 +5,10 @@ public class GUIService
 {
 
     /// constructor
-    public function GUIService(shown: boolean)
+    public function GUIService(shown: boolean, gameDirector: GameDirector)
     {
         m_guiShown = shown;
+        mGameDirector = gameDirector;
     }
 
     /// properties
@@ -20,7 +21,24 @@ public class GUIService
     }
     public function set GUIShown( value: boolean)
     {
-        m_guiShown = value;
+        if (m_guiShown != value)
+        {
+            m_guiShown = value;
+            if (mOnGUIShown)
+            {
+                mOnGUIShown(m_guiShown);
+            }
+        }
+    }
+
+    var mOnGUIShown: Function;
+    public function get OnGUIShown(): Function
+    {
+       return mOnGUIShown;
+    }
+    public function set OnGUIShown(value: Function)
+    {
+        mOnGUIShown = value;
     }
 
     /// Contains an array of options that are used in a GUI element.
@@ -46,4 +64,5 @@ public class GUIService
         }
     }
 
+    private var mGameDirector: GameDirector;
 }

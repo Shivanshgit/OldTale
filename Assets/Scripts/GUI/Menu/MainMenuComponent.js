@@ -6,8 +6,17 @@
 /// will call DontDestroyOnLoad(this) if set to @c true which is mean that this component will not be destroyed when new Scene is loaded.
 public var mc_bKeepThisMainMenuOnLoad = false;
 
-public class MainMenu
+public class MainMenu extends MenuEventsListener
 {
+
+    /// Constructor
+    public function MainMenu(bKeepAfterSceneLoad: boolean, gameDirector: GameDirector)
+    {
+        m_bKeepAfterSceneLoad = bKeepAfterSceneLoad;
+        m_GUIService = null;
+        mGameDirector = gameDirector;
+    }
+
     /// properties
 
     /**
@@ -21,41 +30,58 @@ public class MainMenu
 
     public function set GUIService(value: GUIService)
     {
-        m_GUIService = value;
+        if (m_GUIService != value)
+        {
+            m_GUIService = value;
+        }
     }
 
     /// simple public properties. No need to create a get/set methods for them.
 
     public var m_bKeepAfterSceneLoad = false;
 
-    /// Constructor
-    public function MainMenu(bKeepAfterSceneLoad: boolean)
+    /// @copydoc MenuEventsListener.onMenuEvent()
+    public function onMenuEvent(event: MenuEvent)
     {
-        m_bKeepAfterSceneLoad = bKeepAfterSceneLoad;
-        m_GUIService = null;
+        if (m_GUIService)
+        {
+            m_GUIService.GUIShown = !m_GUIService.GUIShown;
+            mGameDirector.onMainMenuShown(m_GUIService.GUIShown);
+        }
     }
 
+    private var mGameDirector: GameDirector;
 }
 
-private var mc_MainMenu = new MainMenu(mc_bKeepThisMainMenuOnLoad);
+var mc_MainMenu: MainMenu;
+var mc_GameDirector: GameDirector;
 
 function Awake ()
 {
-    if (mc_MainMenu.m_bKeepAfterSceneLoad)
+    var mainGameObject = GameObject.FindGameObjectWithTag("GameDirector");
+    if (mainGameObject)
+    {
+        var directorComponent: GameDirectorComponent;
+        directorComponent = mainGameObject.GetComponent(GameDirectorComponent);
+        mc_GameDirector = directorComponent.getGameDirector();
+    }
+    if (mc_GameDirector)
+    {
+        mc_MainMenu = new MainMenu(mc_bKeepThisMainMenuOnLoad, mc_GameDirector);
+        mc_GameDirector.addMenuListener(mc_MainMenu);
+    }
+    if (mc_bKeepThisMainMenuOnLoad)
     {
         DontDestroyOnLoad(this);
     }
 }
 
+function Start()
+{
+}
+
 function Update()
 {
-    if (Input.GetButtonDown("OpenMainMenu"))
-    {
-        if (mc_MainMenu.GUIService)
-        {
-            mc_MainMenu.GUIService.GUIShown = !mc_MainMenu.GUIService.GUIShown;
-        }
-    }
 }
 
 function OnGUI()

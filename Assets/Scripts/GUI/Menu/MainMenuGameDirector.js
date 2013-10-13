@@ -12,13 +12,8 @@ public var buttonsHeight = 50;
 private var mainMenu: MainMenuComponent;
 private var gameDirector: GameDirector;
 
-function Start()
+function Awake()
 {
-    var menuGUIService: GUIService;
-    menuGUIService = createGUIService(mainMenuEnabledAtStart);
-    mainMenu = menusObject.AddComponent(MainMenuComponent);
-    mainMenu.getMainMenu().GUIService = menuGUIService;
-
     var mainGameObject = GameObject.FindGameObjectWithTag("GameDirector");
     if (mainGameObject)
     {
@@ -28,10 +23,18 @@ function Start()
     }
 }
 
+function Start()
+{
+    var menuGUIService: GUIService;
+    menuGUIService = createGUIService(mainMenuEnabledAtStart);
+    mainMenu = menusObject.AddComponent(MainMenuComponent);
+    mainMenu.getMainMenu().GUIService = menuGUIService;
+}
+
 function createGUIService(bShown: boolean) : GUIService
 {
     var result: GUIService;
-    result = new GUIService(bShown);
+    result = new GUIService(bShown, gameDirector);
     var newObject: GUIObject;
 
     for(var i : int = 0; i < mainMenuOptions.Count; i++)
