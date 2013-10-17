@@ -27,6 +27,7 @@ class MainUIGameEventsListener extends GameEventsListener
     public function MainUIGameEventsListener(show: boolean)
     {
         mShowUI = show;
+        mCanShowUI = !show;
     }
 
     /**
@@ -37,6 +38,24 @@ class MainUIGameEventsListener extends GameEventsListener
         mShowUI = !paused;
     }
 
+    /**
+     * @copydoc GameEventsListener.onGameEvent()
+     */
+    public function onGameEvent(event: GameEvent)
+    {
+        switch(event.GameEventType)
+        {
+            case GameEvent.Type.DialogShown:
+                mCanShowUI = false;
+                break;
+            case GameEvent.Type.DialogHidden:
+                mCanShowUI = true;
+                break;
+            default:
+                break;
+        }
+    }
+
     var mShowUI: boolean;
     public function get ShowUI(): boolean
     {
@@ -45,6 +64,12 @@ class MainUIGameEventsListener extends GameEventsListener
     public function set ShowUI(value: boolean)
     {
         mShowUI = value;
+    }
+
+    var mCanShowUI: boolean;
+    public function get CanShowUI(): boolean
+    {
+        return mCanShowUI;
     }
 
     private var mGameObject: GameObject;
@@ -77,8 +102,9 @@ function Start()
     }
 }
 
-function OnGUI(){
-    if (!gameEventsListener.ShowUI)
+function OnGUI()
+{
+    if (!gameEventsListener.ShowUI || !gameEventsListener.CanShowUI)
     {
         return;
     }

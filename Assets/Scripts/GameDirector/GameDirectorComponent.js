@@ -3,10 +3,12 @@ import System.Collections.Generic;
 
 public var reachableLevelFromCurrentScene: List.<String>;
 
+/*----------------------------- MENUEVENT------------------------------*/
 /// @brief MenuEvent is an event generated for Menu's (like Main Menu).
 public class MenuEvent
 {}
 
+/*----------------------------- MENUEVENT LISTENER------------------------------*/
 /// @brief Listener for all menu events like "MainMenu button is pressed, etc."
 public class MenuEventsListener
 {
@@ -15,11 +17,32 @@ public class MenuEventsListener
     {}
 }
 
+/*----------------------------- GAMEEVENT------------------------------*/
+public class GameEvent
+{
+     enum Type
+     {
+         DialogShown,
+         DialogHidden
+     }
+
+    public function GameEvent(type: Type)
+    {
+        mType = type;
+    }
+
+     var mType: GameEvent.Type;
+     public function get GameEventType(): GameEvent.Type
+     {
+        return mType;
+     }
+
+}
+
+/*----------------------------- GAMEEVENT LISTENER------------------------------*/
 /// @brief Listener for all general game events like gamePausedChanged, etc.
 public class GameEventsListener
 {
-    public class GameEvent
-    {}
 
     public function onGamePausedChanged(paused: boolean)
     {}
@@ -54,11 +77,25 @@ public class GameDirector
         Application.LoadLevel("Prolog");
     }
 
+    /**
+     *  @brief used to notigy GameDirector that dialog is finsihed/hidden.
+     */
     function onDialogFinished(dialog: BaseDialog)
     {
-        //TODO: do something
+        onGameEvent(new GameEvent(GameEvent.Type.DialogHidden));
     }
 
+    /**
+     *  @brief used to notigy GameDirector that in-game dialog is started/shown.
+     */
+    function onDialogShown(dialog: BaseDialog)
+    {
+        onGameEvent(new GameEvent(GameEvent.Type.DialogShown));
+    }
+
+    /**
+     *  @brief used to notigy GameDirector that MainMenu is shown or hidden.
+     */
     function onMainMenuShown(shown: boolean)
     {
         setPaused(shown);
@@ -97,7 +134,7 @@ public class GameDirector
         mGameListeners.Remove(listener);
     }
 
-    public function onGameEvent(event: GameEventsListener.GameEvent)
+    public function onGameEvent(event: GameEvent)
     {
         for (var i = 0; i < mGameListeners.Count; i++)
         {
@@ -138,6 +175,7 @@ public class GameDirector
 
 private var gameDirector = new GameDirector();
 
+// @return a GameDirector object
 function getGameDirector(): GameDirector
 {
     return gameDirector;

@@ -22,6 +22,7 @@ public class DialogService
         mCurrentDialog = dialog;
         mCurrentDialog.OnDone = this.onDialogDone;
         mCurrentDialog.Shown = true;
+        mGameDirector.onDialogShown(mCurrentDialog);
     }
 
     public function skipCurrentDialog()
@@ -34,7 +35,7 @@ public class DialogService
 
     public function onDialogDone(dialog: BaseDialog)
     {
-        if (mCurrentDialog == BaseDialog)
+        if (!Object.ReferenceEquals(mCurrentDialog, BaseDialog))
         {
             mGameDirector.onDialogFinished(mCurrentDialog);
             mCurrentDialog.Shown = false;
@@ -44,7 +45,7 @@ public class DialogService
 
     public function drawDialog()
     {
-        if (mCurrentDialog != null)
+        if (mCurrentDialog != null && !mGameDirector.IsPaused)
         {
             mCurrentDialog.draw();
         }
@@ -54,10 +55,10 @@ public class DialogService
     private var mGameDirector: GameDirector;
 }
 
-var mc_DialogService: DialogService;
-var mc_gameDirector: GameDirector;
+private var mc_DialogService: DialogService;
+private var mc_gameDirector: GameDirector;
 
-function Start()
+function Awake()
 {
     var mainGameObject = GameObject.FindGameObjectWithTag("GameDirector");
     if (mainGameObject)
@@ -87,6 +88,8 @@ function OnGUI()
     mc_DialogService.drawDialog();
 }
 
+
+/// returns a DialogService
 function getDialogService(): DialogService
 {
     return mc_DialogService;

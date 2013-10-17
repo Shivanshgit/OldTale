@@ -20,7 +20,10 @@ public class BaseDialog
     public function skip()
     {
         mShown = false;
-        mOnDone(this);
+        if (mOnDone != null)
+        {
+            mOnDone(this);
+        }
     }
 
     /**
