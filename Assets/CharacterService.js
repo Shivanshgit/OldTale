@@ -28,9 +28,11 @@ class CharacterGameEventsListener extends GameEventsListener
         switch(event.GameEventType)
         {
             case GameEvent.Type.DialogShown:
+            case GameEvent.Type.FullScreenUIShown:
                 updateAllComponentsButThis(false); //disable character's control
                 break;
             case GameEvent.Type.DialogHidden:
+            case GameEvent.Type.FullScreenUIHidden:
                 updateAllComponentsButThis(true && !mGameDirector.IsPaused); // enable character's control
                 break;
             default:

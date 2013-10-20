@@ -45,7 +45,7 @@ public class GameEvent
 /// @brief Listener for all general game events like gamePausedChanged, etc.
 public class GameEventsListener
 {
-
+    /// @brief triggered when gamePaused state is changed.
     public function onGamePausedChanged(paused: boolean)
     {}
 
