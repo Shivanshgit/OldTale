@@ -23,7 +23,9 @@ public class GameEvent
      enum Type
      {
          DialogShown,
-         DialogHidden
+         DialogHidden,
+         FullScreenUIShown,
+         FullScreenUIHidden
      }
 
     public function GameEvent(type: Type)
@@ -70,9 +72,18 @@ public class GameDirector
     }
 
     /**
+     * @brief onFullScreenUIElementShown should be called by a UI element (like map or any other similar full screen UI)
+     * when it is shown/hidden.
+     */
+    public function onFullScreenUIElementShown(shown: boolean)
+    {
+        onGameEvent(new GameEvent(shown ? GameEvent.Type.FullScreenUIShown : GameEvent.Type.FullScreenUIHidden));
+    }
+
+    /**
      * @brief loads first game's scene.
      */
-    function onStartNewGame()
+    public function onStartNewGame()
     {
         Application.LoadLevel("Prolog");
     }
@@ -80,7 +91,7 @@ public class GameDirector
     /**
      *  @brief used to notigy GameDirector that dialog is finsihed/hidden.
      */
-    function onDialogFinished(dialog: BaseDialog)
+    public function onDialogFinished(dialog: BaseDialog)
     {
         onGameEvent(new GameEvent(GameEvent.Type.DialogHidden));
     }
@@ -88,7 +99,7 @@ public class GameDirector
     /**
      *  @brief used to notigy GameDirector that in-game dialog is started/shown.
      */
-    function onDialogShown(dialog: BaseDialog)
+    public function onDialogShown(dialog: BaseDialog)
     {
         onGameEvent(new GameEvent(GameEvent.Type.DialogShown));
     }
@@ -96,7 +107,7 @@ public class GameDirector
     /**
      *  @brief used to notigy GameDirector that MainMenu is shown or hidden.
      */
-    function onMainMenuShown(shown: boolean)
+    public function onMainMenuShown(shown: boolean)
     {
         setPaused(shown);
     }

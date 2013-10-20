@@ -10,6 +10,7 @@ Assets/GameData/Assets/
 *.csproj
 *.unityproj
 *.sln
+*.userprefs
 
 
 # Free assets folder
