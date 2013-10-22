@@ -1,8 +1,5 @@
 ﻿#pragma strict
 
-/// @brief should be @c true if this service is used on a cut scene.
-public var showCutDialogOnSceneStart = false;
-
 /**
  * @brief this service handles all Dialog's related logic.
  */
@@ -58,7 +55,7 @@ public class DialogService
 private var mc_DialogService: DialogService;
 private var mc_gameDirector: GameDirector;
 
-function Awake()
+function Start()
 {
     var mainGameObject = GameObject.FindGameObjectWithTag("GameDirector");
     if (mainGameObject)
@@ -67,11 +64,6 @@ function Awake()
         directorComponent = mainGameObject.GetComponent(GameDirectorComponent);
         mc_gameDirector = directorComponent.getGameDirector();
         mc_DialogService = new DialogService(mc_gameDirector);
-        if (showCutDialogOnSceneStart)
-        {
-            var cutSceneDialog = new CutSceneDialog();
-            mc_DialogService.showDialog(cutSceneDialog);
-        }
     }
 }
 

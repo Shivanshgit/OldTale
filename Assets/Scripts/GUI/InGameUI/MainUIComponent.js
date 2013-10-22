@@ -27,7 +27,7 @@ class MainUIGameEventsListener extends GameEventsListener
     public function MainUIGameEventsListener(show: boolean)
     {
         mShowUI = show;
-        mCanShowUI = !show;
+        mCanShowUI = true;
     }
 
     /**
@@ -35,7 +35,7 @@ class MainUIGameEventsListener extends GameEventsListener
      */
     public function onGamePausedChanged(paused: boolean)
     {
-        mShowUI = !paused;
+        mCanShowUI = !paused;
     }
 
     /**
@@ -46,16 +46,24 @@ class MainUIGameEventsListener extends GameEventsListener
         switch(event.GameEventType)
         {
             case GameEvent.Type.DialogShown:
-                mCanShowUI = false;
+                mDialogShown = true;
+                break;
+            case GameEvent.Type.FullScreenUIShown:
+                mFullScreenUIShown = true;
                 break;
             case GameEvent.Type.DialogHidden:
-                mCanShowUI = true;
+                mDialogShown = false;
+                break;
+            case GameEvent.Type.FullScreenUIHidden:
+                mFullScreenUIShown = false;
                 break;
             default:
                 break;
         }
+        mShowUI = !mDialogShown && !mFullScreenUIShown;
     }
 
+    /// @brief specify whether we want to show UI or not.
     var mShowUI: boolean;
     public function get ShowUI(): boolean
     {
@@ -66,6 +74,8 @@ class MainUIGameEventsListener extends GameEventsListener
         mShowUI = value;
     }
 
+    /// @brief @c true if we can show in-game UI elements
+    /// and @c false otherwise.
     var mCanShowUI: boolean;
     public function get CanShowUI(): boolean
     {
@@ -74,6 +84,9 @@ class MainUIGameEventsListener extends GameEventsListener
 
     private var mGameObject: GameObject;
     private var mComponent: MonoBehaviour;
+
+    private var mFullScreenUIShown = false;
+    private var mDialogShown = false;
 }
 
 private var characterSectionXPos = 0;
