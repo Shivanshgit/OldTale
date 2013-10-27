@@ -6,9 +6,8 @@
  */
 class CharacterGameEventsListener extends GameEventsListener
 {
-    public function CharacterGameEventsListener(componentsObject: GameObject, component: MonoBehaviour, director: GameDirector)
+    public function CharacterGameEventsListener(component: CharacterService, director: GameDirector)
     {
-        mGameObject = componentsObject;
         mComponent = component;
         mGameDirector = director;
     }
@@ -17,7 +16,7 @@ class CharacterGameEventsListener extends GameEventsListener
     /// @copydoc GameEventsListener.onGamePausedChanged()
     public function onGamePausedChanged(paused: boolean)
     {
-        updateAllComponentsButThis(!paused);
+        mComponent.updateAllComponentsButThis(!paused);
     }
 
     /**
@@ -29,48 +28,72 @@ class CharacterGameEventsListener extends GameEventsListener
         {
             case GameEvent.Type.DialogShown:
             case GameEvent.Type.FullScreenUIShown:
-                updateAllComponentsButThis(false); //disable character's control
+                mComponent.updateAllComponentsButThis(false); //disable character's control
                 break;
             case GameEvent.Type.DialogHidden:
             case GameEvent.Type.FullScreenUIHidden:
-                updateAllComponentsButThis(true && !mGameDirector.IsPaused); // enable character's control
+                mComponent.updateAllComponentsButThis(true && !mGameDirector.IsPaused); // enable character's control
                 break;
             default:
                 break;
         }
     }
 
-    private function updateAllComponentsButThis(enabled: boolean)
-    {
-        // stop all components.
-        var allComponents = mGameObject.GetComponentsInChildren.<MonoBehaviour>(true);
-        for (var component: MonoBehaviour in allComponents)
-        {
-            if (!component.Equals(mComponent))
-            {
-                component.enabled = enabled;
-            }
-        }
-    }
-
-    private var mGameObject: GameObject;
-    private var mComponent: MonoBehaviour;
+    private var mComponent: CharacterService;
     private var mGameDirector: GameDirector;
 }
+
+/*------------------------CHARACTER TURN EVENTS LISTENER---------------------------------------------------*/
+
+/// @copydoc TurnEventsListener
+class CharacterTurnEventsListener extends TurnEventsListener
+{
+    public function CharacterTurnEventsListener(component: CharacterService, director: GameDirector)
+    {
+        mComponent = component;
+        mGameDirector = director;
+    }
+
+    /// @copydoc TurnEventsListener.onTurnBasedChanged()
+    public function onTurnBasedChanged(turnBased: boolean)
+    {
+    }
+
+    /// @copydoc TurnEventsListener.onPlayersTurnChanged()
+    public function onPlayersTurnChanged(playersTurn: boolean)
+    {
+        mComponent.updateAllComponentsButThis(playersTurn);
+    }
+
+    private var mComponent: CharacterService;
+    private var mGameDirector: GameDirector;
+}
+
+
 /*------------------------CHARACTER---------------------------------------------------*/
 public class Character
 {
-    public function Character(eventsListener: GameEventsListener)
+    public function Character(gameEventsListener: GameEventsListener)
     {
-        mGameEventsListener = eventsListener;
+        mGameEventsListener = gameEventsListener;
+    }
+
+    public function addTurnEventsListener(eventsListener: CharacterTurnEventsListener)
+    {
+        if (eventsListener != null)
+        {
+            mTurnEventsListener = eventsListener;
+        }
     }
 
     private var mGameEventsListener: GameEventsListener;
+    private var mTurnEventsListener: CharacterTurnEventsListener;
 }
 
 
 /*------------------------PRIVATE COMPONENT'S MEMBERS-----------------------------------*/
 private var mcGameDirector: GameDirector;
+private var mcTurnsComponent: TurnsComponent;
 
 private var mcCharacter: Character;
 
@@ -85,15 +108,45 @@ function Start ()
         mcGameDirector = directorComponent.getGameDirector();
         if (mcGameDirector)
         {
-            var eventsListener: CharacterGameEventsListener;
-            eventsListener = new CharacterGameEventsListener(gameObject, this, mcGameDirector);
-            mcGameDirector.addGameListener(eventsListener);
+            var gameEventsListener: CharacterGameEventsListener;
+            gameEventsListener = new CharacterGameEventsListener(this, mcGameDirector);
+            mcGameDirector.addGameListener(gameEventsListener);
 
-            mcCharacter = new Character(eventsListener);
+            mcCharacter = new Character(gameEventsListener);
+        }
+    }
+    var turnsServiceObject = GameObject.FindGameObjectWithTag("TurnsService");
+    if (turnsServiceObject)
+    {
+        mcTurnsComponent = turnsServiceObject.GetComponent(TurnsComponent);
+        if (mcTurnsComponent)
+        {
+            var turnEventsListener: CharacterTurnEventsListener;
+            turnEventsListener = new CharacterTurnEventsListener(this, mcGameDirector);
+            mcTurnsComponent.addTurnsListener(turnEventsListener);
+            mcCharacter.addTurnEventsListener(turnEventsListener);
+        }
+        else
+        {
+            Debug.LogError("CharacterService: TurnsComponent is not found!");
+        }
+    }
+    else
+    {
+        Debug.LogError("CharacterService: turnsService object is not found.");
+    }
+}
+
+function updateAllComponentsButThis(enabled: boolean)
+{
+    // stop all components.
+    var allComponents = gameObject.GetComponentsInChildren.<MonoBehaviour>(true);
+    for (var component: MonoBehaviour in allComponents)
+    {
+        if (!component.Equals(this))
+        {
+            component.enabled = enabled;
         }
     }
 }
 
-function Update ()
-{
-}

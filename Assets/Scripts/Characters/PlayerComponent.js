@@ -26,6 +26,10 @@ public class PlayerData
         {
             mHealth = 0;
         }
+        if (mHealthChangedCallback != null)
+        {
+            mHealthChangedCallback(mHealth);
+        }
     }
 
     /// @brief Player's experience.
@@ -95,7 +99,7 @@ function Awake()
     {
         mcData = new PlayerData();
     }
-    mcData.OnHealthChanged = this.onPlayersHealthChanged;
+    mcData.OnHealthChanged = onPlayersHealthChanged;
 }
 
 function OnApplicationQuit() {
