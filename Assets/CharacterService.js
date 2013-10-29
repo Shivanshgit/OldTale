@@ -16,7 +16,7 @@ class CharacterGameEventsListener extends GameEventsListener
     /// @copydoc GameEventsListener.onGamePausedChanged()
     public function onGamePausedChanged(paused: boolean)
     {
-        mComponent.updateAllComponentsButThis(!paused);
+        mComponent.updateCharacterMovementComponents(!paused);
     }
 
     /**
@@ -28,11 +28,11 @@ class CharacterGameEventsListener extends GameEventsListener
         {
             case GameEvent.Type.DialogShown:
             case GameEvent.Type.FullScreenUIShown:
-                mComponent.updateAllComponentsButThis(false); //disable character's control
+                mComponent.updateCharacterMovementComponents(false); //disable character's control
                 break;
             case GameEvent.Type.DialogHidden:
             case GameEvent.Type.FullScreenUIHidden:
-                mComponent.updateAllComponentsButThis(true && !mGameDirector.IsPaused); // enable character's control
+                mComponent.updateCharacterMovementComponents(true && !mGameDirector.IsPaused); // enable character's control
                 break;
             default:
                 break;
@@ -62,7 +62,7 @@ class CharacterTurnEventsListener extends TurnEventsListener
     /// @copydoc TurnEventsListener.onPlayersTurnChanged()
     public function onPlayersTurnChanged(playersTurn: boolean)
     {
-        mComponent.updateAllComponentsButThis(playersTurn);
+        mComponent.updateCharacterMovementComponents(playersTurn);
     }
 
     private var mComponent: CharacterService;
@@ -96,6 +96,9 @@ private var mcGameDirector: GameDirector;
 private var mcTurnsComponent: TurnsComponent;
 
 private var mcCharacter: Character;
+
+
+
 
 /*--------------------------START, UPDATE, ETC------------------------------------------*/
 function Start ()
@@ -137,16 +140,24 @@ function Start ()
     }
 }
 
-function updateAllComponentsButThis(enabled: boolean)
+function updateCharacterMovementComponents(enabled: boolean)
 {
-    // stop all components.
-    var allComponents = gameObject.GetComponentsInChildren.<MonoBehaviour>(true);
-    for (var component: MonoBehaviour in allComponents)
+    // stop all character movement related components.
+    var motorComponents = gameObject.GetComponentsInChildren.<CharacterMotor>(true);
+    for (var component: CharacterMotor in motorComponents)
     {
-        if (!component.Equals(this))
-        {
-            component.enabled = enabled;
-        }
+      component.enabled = enabled;
+    }
+    var inputControllerComponents = gameObject.GetComponentsInChildren.<PlayerInputController>(true);
+    for (var component: PlayerInputController in inputControllerComponents)
+    {
+      component.enabled = enabled;
+    }
+    var mouseLookComponents = gameObject.GetComponentsInChildren.<MouseLook>(true);
+    for (var component: MouseLook in mouseLookComponents)
+    {
+      component.enabled = enabled;
     }
 }
 
+@script AddComponentMenu ("Player/Character Service")

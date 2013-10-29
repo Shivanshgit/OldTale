@@ -202,3 +202,5 @@ function Update()
         gameDirector.onMenuEvent(event);
     }
 }
+
+@script AddComponentMenu ("GameDirector/Game Director")

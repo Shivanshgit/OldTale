@@ -122,3 +122,5 @@ public function onPlayersHealthChanged(health: int)
 {
     //TODO: inform GameDirector, etc.
 }
+
+@script AddComponentMenu ("Player/Player Component")

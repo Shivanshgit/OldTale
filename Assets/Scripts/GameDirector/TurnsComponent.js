@@ -1,7 +1,18 @@
 ﻿#pragma strict
 
+/// @c true if we are in a turn-based mode (typically in a battle mode) and @c false otherwise
 var mcTurnBasedEnabled: boolean = false;
-var mcPlayersTurn = true;
+function get TurnBasedEnabled(): boolean
+{
+    return mcTurnBasedEnabled;
+}
+
+/// @c true if it is a player's turn and @c false otherwise.
+var mcPlayersTurn: boolean = true;
+function get PlayersTurn(): boolean
+{
+    return mcPlayersTurn;
+}
 
 /// TurnEventsListener class is an interface for every object that want to be informed regarding turns updates (who's turn is it, etc).
 public class TurnEventsListener
@@ -38,11 +49,12 @@ function removeListener(listener: TurnEventsListener)
 
 
 /// should be called by mobs when player is considered as 'detected' to turn on a turn-based mode.
-function playerDetected()
+function playerDetected( detected: boolean)
 {
-    mcTurnBasedEnabled = true;
-    mcPlayersTurn = true;
+    mcTurnBasedEnabled = detected;
+    mcPlayersTurn = true; // always true when changing a game's mode.
     notifyTurnBasedChanged();
+    notifyPlayersTurnChanged();
 }
 
 /// notifies listeners that turn-based mode is changed.
@@ -50,7 +62,7 @@ function notifyTurnBasedChanged()
 {
     for (var i = 0; i < mcTurnListeners.Count; i++)
     {
-        (mcTurnListeners[i]).onTurnBasedChanged(mcTurnBasedEnabled);
+        mcTurnListeners[i].onTurnBasedChanged(mcTurnBasedEnabled);
     }
 }
 
@@ -58,6 +70,8 @@ function notifyPlayersTurnChanged()
 {
     for (var i = 0; i < mcTurnListeners.Count; i++)
     {
-        (mcTurnListeners[i]).onTurnBasedChanged(mcTurnBasedEnabled);
+        mcTurnListeners[i].onPlayersTurnChanged(mcTurnBasedEnabled);
     }
 }
+
+@script AddComponentMenu ("GameDirector/Turns Component")
