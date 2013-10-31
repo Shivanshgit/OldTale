@@ -70,7 +70,7 @@ function notifyPlayersTurnChanged()
 {
     for (var i = 0; i < mcTurnListeners.Count; i++)
     {
-        mcTurnListeners[i].onPlayersTurnChanged(mcTurnBasedEnabled);
+        mcTurnListeners[i].onPlayersTurnChanged(mcPlayersTurn);
     }
 }
 

@@ -1,9 +1,9 @@
-﻿private var motor : CharacterMotor;
+﻿private var mcMotor: CharacterMotor;
 private var mcTurnsComponent: TurnsComponent;
 
 function Awake ()
 {
-    motor = GetComponent(CharacterMotor);
+    mcMotor = GetComponent(CharacterMotor);
 }
 
 function Start()
@@ -28,15 +28,15 @@ function Update ()
     // if turn-based mode is not enabled then handle input in a 'real' time
     if (!mcTurnsComponent.TurnBasedEnabled)
     {
-        motor.inputMoveDirection = getMoveDirection();
-        motor.inputJump = Input.GetButton("Jump");
+        mcMotor.inputMoveDirection = getMoveDirection();
+        mcMotor.inputJump = Input.GetButton("Jump");
     }
     // otherwise handle input specifically for a turn-based mode if it is a Player's turn
     else if (mcTurnsComponent.PlayersTurn)
     {
         // TODO: implement some nice logic including 'speed points', etc.
-        motor.inputMoveDirection = getMoveDirection();
-        motor.inputJump = Input.GetButton("Jump");
+        mcMotor.inputMoveDirection = getMoveDirection();
+        mcMotor.inputJump = Input.GetButton("Jump");
     }
 }
 
